@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0d14">
+  <title>Download — SendBox</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f8cff'/%3E%3Cstop offset='1' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <main class="card receive-card">
+    <header class="brand">
+      <span class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4v12m0 0 4-4m-4 4-4-4"/>
+          <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+      </span>
+      <div>
+        <h1>SendBox</h1>
+        <p class="tagline">You've got files waiting</p>
+      </div>
+    </header>
+
+    {% if error %}
+      <div class="expired">
+        <div class="expired-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 8v4m0 4h.01"/>
+          </svg>
+        </div>
+        <h2>This link has expired</h2>
+        <p>Files are removed when a link expires or hits its download limit.</p>
+        <a href="/" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 1 2.6 6.4M3 21v-5h5"/>
+          </svg>
+          <span>Send files instead</span>
+        </a>
+      </div>
+    {% else %}
+      <div class="receive-summary">
+        <div class="summary-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 15V3m0 0 4 4m-4-4-4 4"/>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+          </svg>
+        </div>
+        <div>
+          <h2>{{ files | length }} file(s)</h2>
+          <p>{{ (total_size / 1048576) | round(1) }} MB total</p>
+        </div>
+        <a class="btn btn-primary btn-all" href="/api/share/{{ token }}/zip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 8v8a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5Z"/>
+            <path d="M12 16V8m0 0-3 3m3-3 3 3"/>
+          </svg>
+          <span>Download all</span>
+        </a>
+      </div>
+
+      <ul class="filelist receive">
+        {% for f in files %}
+        <li>
+          <span class="file-type" data-ext="{{ f.name.split('.')[-1].lower() if '.' in f.name else '' }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/>
+              <path d="M14 3v5h5"/>
+            </svg>
+          </span>
+          <span class="f-meta">
+            <span class="fname">{{ f.name }}</span>
+            <span class="fsize">{{ (f.size / 1048576) | round(2) }} MB</span>
+          </span>
+          <a class="btn btn-ghost dl-btn" href="/api/share/{{ token }}/files/{{ f.id }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 5v10m0 0 4-4m-4 4-4-4"/>
+              <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+            </svg>
+            <span>Download</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <p class="foot-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/>
+        </svg>
+        Files delete themselves when this link expires.
+      </p>
+    {% endif %}
+  </main>
+</body>
+</html>
