@@ -15,6 +15,9 @@ files in `storage/`.
 - Individual file downloads + "Download all as .zip" (streamed, works with GBs)
 - Files are deleted automatically when expired / limit hit (cleanup runs every 5 min)
 - Filenames sanitized (no path traversal); random hard-to-guess share tokens
+- **P2P direct transfer** (`/p2p`): files go straight device-to-device over an
+  encrypted WebRTC data channel — the server only relays connection setup
+  (signaling), so there is **no size limit** and nothing is stored on the server
 
 ## Quick start
 
@@ -101,4 +104,21 @@ counters durable on Render:
 | `RENDER_EXTERNAL_URL` | (auto-set by Render) | Enables the keep-alive self-ping |
 | `PING_INTERVAL_SECONDS` | 600 | Seconds between keep-alive pings (min 60) |
 | `SENDBOX_DATA_DIR` | project dir | Where `storage/` and `shares.json` live — point at a persistent disk |
+
+## Peer-to-peer (P2P) transfer
+
+Open `/p2p` (there's a "P2P direct" toggle on the home page). The person sending
+creates a session and shares the link/code; the receiver opens it. Files then
+flow **directly between the two devices** over a WebRTC data channel — no size
+limit, nothing uploaded to or stored on the server.
+
+- Uses public Google STUN for NAT traversal, so it usually works across
+  different networks. If direct connections fail behind strict/symmetric NATs,
+  set a TURN server via the `P2P_ICE_SERVERS` env var (JSON array of ICE server
+  objects), e.g.:
+  `P2P_ICE_SERVERS='[{"urls":"stun:stun.l.google.com:19302"},{"urls":"turn:your-turn.example:3478","username":"u","credential":"p"}]'`
+- Signaling rooms live in process memory, so run a **single server worker**
+  (`python app.py` or `uvicorn app:app`) for P2P to work — the standard
+  upload/link-sharing flow still works fine with multiple workers.
+- Both devices must keep their tab open until the transfer completes.
 

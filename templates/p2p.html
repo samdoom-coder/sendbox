@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b0d14">
+  <title>P2P — SendBox</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%234f8cff'/%3E%3Cstop offset='1' stop-color='%23a855f7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <main class="card">
+    <header class="brand">
+      <span class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 16V4m0 0L7 9m5-5 5 5"/>
+          <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+      </span>
+      <div>
+        <h1>P2P transfer</h1>
+        <p class="tagline">Direct device-to-device, nothing stored.</p>
+      </div>
+    </header>
+
+    <div class="mode-switch" role="tablist" aria-label="Transfer mode">
+      <a class="mode-btn" href="/">Link sharing</a>
+      <span class="mode-btn active" aria-current="page">P2P direct</span>
+    </div>
+
+    <!-- HOME: create or join -->
+    <section id="p2pHome">
+      <p class="p2p-desc">
+        Files move directly between devices over an encrypted, peer-to-peer
+        connection. No size limits, nothing passes through or stays on the server.
+      </p>
+      <button id="createBtn" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7v10m2 0a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2Zm0 0V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2"/>
+        </svg>
+        <span>Create a P2P session</span>
+      </button>
+      <div class="divider"><span>or join with a link / code</span></div>
+      <div class="receive-row">
+        <input id="roomInput" placeholder="Paste P2P link or room code">
+        <button id="joinBtn" class="btn btn-ghost" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 15V3m0 0 4 4m-4-4-4 4"/>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+          </svg>
+          <span>Join</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- WAIT: waiting for the peer -->
+    <section id="p2pWait" class="hidden">
+      <div class="p2p-spinner" aria-hidden="true"></div>
+      <h2 id="roleLabel" class="p2p-wait-title">Waiting for receiver&hellip;</h2>
+      <p class="p2p-wait-sub">Share this link — the other person opens it and the transfer starts:</p>
+      <div class="linkrow">
+        <input id="waitLink" readonly>
+        <button id="copyWait" class="btn btn-ghost" title="Copy">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="12" height="12" rx="2"/>
+            <path d="M5 15V5a2 2 0 0 1 2-2h10"/>
+          </svg>
+          <span>Copy</span>
+        </button>
+      </div>
+      <p class="p2p-note">Keep this tab open until the transfer finishes.</p>
+    </section>
+
+    <!-- ACTIVE: connected, send / receive -->
+    <section id="p2pActive" class="hidden">
+      <p id="statusText" class="status-line"></p>
+
+      <div id="sendPanel">
+        <div id="filesDrop" class="drop" tabindex="0" role="button" aria-label="Select files to send">
+          <input type="file" id="p2pFileInput" multiple hidden>
+          <p class="drop-title">Select files to send</p>
+          <p class="drop-sub">any size · direct P2P</p>
+        </div>
+        <div id="p2pFilePanel" class="file-panel hidden">
+          <ul id="p2pFileList" class="filelist"></ul>
+        </div>
+        <button id="sendBtn" class="btn btn-primary" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4"/>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+          </svg>
+          <span>Send files</span>
+        </button>
+      </div>
+
+      <div id="sendProgressWrap" class="progress-wrap hidden">
+        <div class="progress"><div id="sendBar"></div></div>
+        <div class="progress-meta">
+          <span id="sendText">0%</span>
+          <span id="sendDetail"></span>
+        </div>
+      </div>
+
+      <div id="recvProgressWrap" class="progress-wrap hidden">
+        <div class="progress"><div id="recvBar"></div></div>
+        <div class="progress-meta">
+          <span id="recvText"></span>
+          <span id="recvDetail"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script>window.ICE_SERVERS = {{ ice_servers | tojson }};</script>
+  <script src="/static/p2p.js"></script>
+</body>
+</html>

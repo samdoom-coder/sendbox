@@ -417,6 +417,62 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(0.95); } to { opacity: 1; transform: none; } }
 @keyframes toast-out { to { opacity: 0; transform: translateY(10px) scale(0.96); } }
 
+/* ---------- P2P ---------- */
+.mode-switch {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 4px; gap: 4px;
+  margin-bottom: 24px;
+}
+.mode-btn {
+  text-align: center; padding: 9px 4px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  text-decoration: none; cursor: pointer; user-select: none;
+  transition: all 0.18s;
+}
+.mode-btn:hover { color: var(--text); }
+.mode-btn.active {
+  background: var(--grad); color: #fff;
+  box-shadow: 0 4px 14px -4px rgba(124, 92, 255, 0.6);
+}
+
+.p2p-desc { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin-bottom: 22px; }
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 20px 0; color: var(--faint); font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+.p2p-wait-title { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; text-align: center; margin-bottom: 8px; }
+.p2p-wait-sub { font-size: 13.5px; color: var(--muted); text-align: center; margin: 0 0 18px; }
+.p2p-note { font-size: 12.5px; color: var(--faint); text-align: center; margin-top: 18px; }
+
+.p2p-spinner {
+  width: 58px; height: 58px; margin: 4px auto 22px;
+  border-radius: 50%;
+  border: 3px solid var(--border-strong);
+  border-top-color: var(--accent);
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.status-line {
+  font-size: 13.5px; color: var(--muted);
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+#sendBar, #recvBar {
+  height: 100%; width: 0%;
+  background: var(--grad);
+  border-radius: 999px;
+  transition: width 0.15s ease;
+}
+
 .hidden { display: none !important; }
 
 @media (max-width: 460px) {

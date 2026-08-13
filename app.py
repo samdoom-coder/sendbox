@@ -14,7 +14,7 @@ from pathlib import Path
 
 import uvicorn
 import zipstream
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse, HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -39,6 +39,15 @@ CLEANUP_INTERVAL = 300
 # Render free instances sleep after 15 min of inactivity. RENDER_EXTERNAL_URL is
 # set automatically by Render; when present we self-ping to stay awake.
 RENDER_URL = os.environ.get("RENDER_EXTERNAL_URL", "").rstrip("/")
+
+# ---------- P2P (peer-to-peer) direct transfer ----------
+# The server only relays WebRTC signaling (SDP + ICE) and never stores files.
+# Use public STUN for NAT traversal; add TURN via P2P_ICE_SERVERS if you need
+# reliable connections through symmetric NATs.
+DEFAULT_ICE_SERVERS = [{"urls": "stun:stun.l.google.com:19302"}]
+ICE_SERVERS = json.loads(os.environ.get("P2P_ICE_SERVERS", json.dumps(DEFAULT_ICE_SERVERS)))
+MAX_P2P_PEERS = 2
+P2P_ROOMS = {}  # room -> {peer_id: WebSocket} (single-worker in-memory signaling)
 
 
 def now_iso():
@@ -197,6 +206,60 @@ async def ping():
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     return templates.TemplateResponse(request, "index.html", {})
+
+
+@app.get("/p2p", response_class=HTMLResponse)
+async def p2p_page(request: Request):
+    return templates.TemplateResponse(request, "p2p.html", {"ice_servers": ICE_SERVERS})
+
+
+@app.websocket("/ws/{room}")
+async def p2p_signal(websocket: WebSocket, room: str):
+    """Relay WebRTC signaling (SDP/ICE) between the two peers in a room."""
+    room = room[:64]
+    peer_id = websocket.query_params.get("peer", "")[:64] or uuid.uuid4().hex[:12]
+    await websocket.accept()
+    peers = P2P_ROOMS.setdefault(room, {})
+    if len(peers) >= MAX_P2P_PEERS:
+        await websocket.send_json({"type": "error", "message": "room-full"})
+        await websocket.close()
+        return
+    peers[peer_id] = websocket
+    peer_list = list(peers.keys())
+    try:
+        await websocket.send_json({"type": "room-state", "peerId": peer_id, "peers": peer_list})
+        for pid, sock in list(peers.items()):
+            if pid != peer_id:
+                try:
+                    await sock.send_json({"type": "peer-joined", "peerId": peer_id, "peers": peer_list})
+                except Exception:
+                    pass
+        while True:
+            data = await websocket.receive_json()
+            data["from"] = peer_id
+            target = data.get("to")
+            if target and target in peers:
+                await peers[target].send_json(data)
+            else:
+                for pid, sock in list(peers.items()):
+                    if pid != peer_id:
+                        try:
+                            await sock.send_json(data)
+                        except Exception:
+                            pass
+    except WebSocketDisconnect:
+        pass
+    finally:
+        if peer_id in peers:
+            del peers[peer_id]
+        if not peers:
+            P2P_ROOMS.pop(room, None)
+        else:
+            for pid, sock in list(peers.items()):
+                try:
+                    await sock.send_json({"type": "peer-left", "peerId": peer_id})
+                except Exception:
+                    pass
 
 
 @app.get("/r/{token}", response_class=HTMLResponse)
