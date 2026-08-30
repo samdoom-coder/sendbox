@@ -1,5 +1,7 @@
 # SendBox
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/samdoom-coder/sendbox/blob/main/license)
+
 A self-hosted, Send-Anywhere-style file sharing app. Upload files, get a link,
 share it, and the files auto-delete when the link expires or the download limit
 is reached.
