@@ -1,6 +1,7 @@
 # SendBox
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/samdoom-coder/sendbox/blob/main/license)
+[![Python 3.9+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 ![Description of image](Banner.png)
 
 A self-hosted, Send-Anywhere-style file sharing app. Upload files, get a link,
