@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#efe6d3">
   <title>SendBox — share files</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230d9488'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff4d12'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <main class="card" id="card">
     <header class="brand">
       <span class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 16V4m0 0L7 9m5-5 5 5"/>
-          <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
-        </svg>
+        <img src="/static/logo.svg" alt="SendBox" width="48" height="48" loading="eager">
       </span>
-      <div>
-        <h1>SendBox</h1>
+      <div class="brand-text">
+        <h1><span>Send</span><span class="box">Box</span></h1>
         <p class="tagline">Drop files, share instantly.</p>
       </div>
     </header>
@@ -33,7 +31,7 @@
       <div id="drop" class="drop" tabindex="0" role="button" aria-label="Upload files">
         <input type="file" id="fileInput" multiple hidden>
         <div class="drop-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 16V7m0 0 3.5 3.5M12 7l-3.5 3.5"/>
             <path d="M4 15v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
           </svg>
@@ -101,7 +99,7 @@
     <!-- RESULT STATE -->
     <section id="resultState" class="hidden">
       <div class="success-ring">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 13l4 4L19 7"/>
         </svg>
       </div>

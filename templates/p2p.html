@@ -3,23 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#fafafa">
+  <meta name="theme-color" content="#efe6d3">
   <title>P2P — SendBox</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230d9488'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="/static/logo.svg">
+  <link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ff4d12'/%3E%3Cpath d='M50 28v26m0 0-9-9m9 9 9-9M34 66h32' stroke='white' stroke-width='7' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <main class="card">
     <header class="brand">
-      <span class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 16V4m0 0L7 9m5-5 5 5"/>
-          <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
-        </svg>
-      </span>
-      <div>
-        <h1>P2P transfer</h1>
-        <p class="tagline">Direct device-to-device, nothing stored.</p>
+      <a href="/" class="logo" style="text-decoration:none">
+        <img src="/static/logo.svg" alt="SendBox" width="48" height="48" loading="eager">
+      </a>
+      <div class="brand-text">
+        <h1><span>Send</span><span class="box">Box</span></h1>
+        <p class="tagline">Direct device-to-device</p>
       </div>
     </header>
 
@@ -56,7 +54,7 @@
     <!-- WAIT: waiting for the peer -->
     <section id="p2pWait" class="hidden">
       <div class="p2p-spinner" aria-hidden="true"></div>
-      <h2 id="roleLabel" class="p2p-wait-title">Waiting for receiver&hellip;</h2>
+      <h2 id="roleLabel" class="p2p-wait-title">Waiting for receiver…</h2>
       <p class="p2p-wait-sub">Share this link — the other person opens it and the transfer starts:</p>
       <div class="linkrow">
         <input id="waitLink" readonly>
